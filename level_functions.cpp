@@ -1,16 +1,52 @@
 #include"level_functions.h"
+#include<cmath>
+#include<map>
+#include<unordered_map>
 #include"RandomNumberGenerator.cpp"
 using namespace std;
 
-void generateGrid(vector<vector<char>> &grid,int numberOfDigitsGenerated){
-    while(numberOfDigitsGenerated){
-        int row = RandomGenerator(0,8);
-        int col = RandomGenerator(0,8);
-        char num = char(RandomGenerator(48,57));
-        cout<<row<<" "<<col<<" "<<num<<endl;
-        grid[row][col] = num;
-        numberOfDigitsGenerated--;
+bool isValid2(int row,int col,vector<vector<char>> &grid,char val){
+   for (int i=0;i<9;i++){
+    if (grid[row][i]==val || (grid[i][col]==val))
+    return false;
+    if (grid[3*(row/3)+i/3][3*(col/3)+i%3]==val)
+    return false;
+   }
+   return true;
+}
+
+void unsolvableTosolvable(vector<vector<char>> &grid){
+    for(int i=0;i<9;i++){
+        for (int j=0;j<9;j++){
+            if (grid[i][j] != '.'){
+                bool validity = isValid2(i,j,grid,grid[i][j]);
+                if(!validity){
+                    while (!validity){
+                        int val = grid[i][j];
+                        grid[i][j] = val++; 
+                        validity = isValid2(i,j,grid,grid[i][j]);
+                    }
+                    
+                }
+            }
+        }
     }
+}
+
+void generateGrid(vector<vector<char>> &grid,int numberOfDigitsGenerated){
+    
+    // vector<int>rows =R2(numberOfDigitsGenerated*2,0,8);
+    // vector<int>cols =R2(numberOfDigitsGenerated,0,8);
+    set<pair<int,int>> mpp = RandomGenerator(numberOfDigitsGenerated,0,8);
+    vector<int>value = R2(numberOfDigitsGenerated,49,57);
+    int j=0; 
+    for (auto x:mpp){
+        int r = x.first;
+        int c = x.second;
+        char v = char(value[j]);
+        j++;
+        grid[r][c] = v;
+    }           
     GridPrinter(grid);
 }
 
@@ -79,4 +115,49 @@ p.second=numberOfDigitsGenerated;
 return p;
 }
 
+bool isSolvable(vector<vector<char>> &grid){
+    unordered_map <char,bool> rows;
+    unordered_map <char,bool> cols;
+    unordered_map <char,bool> cell;
 
+    for (int i=0;i<9;i++){
+        for (int j=0;j<9;j++){
+
+            char ch =grid[i][j];
+            char ch2 = grid[j][i];
+
+            if (cols[ch2]&& ch2!='.')
+            return false;
+            else
+            cols[ch2] = true;
+
+            if(rows[ch] && ch!='.')
+                return false;            
+            else
+                rows[ch] = true;                
+        }
+        rows.clear();
+        cols.clear();
+    }
+    // bool rc = true;
+
+    //checking for cells 
+    for (int r = 0; r < 9; r++){
+       for (int c = 0; c < 9; c++){
+        for (int i = 0; i < 9; i++){
+           int a = (3*(r/3))+i/3;
+           int b = (3*(c/3))+i%3;
+           char ch = grid[a][b];
+           if(cell[ch]&& ch!='.')
+           return false;
+           else
+           cell[ch] =true;
+        }
+        cell.clear();
+        c+=2;         
+       }  
+       r+=2;     
+    }
+    // bool ce = true;
+    return true;
+}
