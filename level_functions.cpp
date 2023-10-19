@@ -5,7 +5,50 @@
 #include"RandomNumberGenerator.cpp"
 using namespace std;
 
-bool isValid2(int row,int col,vector<vector<char>> &grid,char val){
+bool ModeChooser(){  
+    // it wil give the user 2 choice s  
+    // first , does he want to play sudoku ?? 
+    // second , does he wants to solve sudoku using ai?? 
+    // 
+    int choice;
+    int count=0;
+    while(count<=5){
+    cout<<"enter choice "<<endl<<"1) do you want to play Sudoku ?? "<<endl<<"2) do you want to solve your sudoku using ai ?? "<<endl;
+    try{
+        string input;
+        cin>>input;
+        choice = stoi(input);
+        if (choice!= 1 && choice !=2)
+            //throw a custom error that will have the below body and will throw error when number is not 1 or 2
+            throw 10;        
+        else if (choice ==1)
+            return true;        
+        else 
+            return false;        
+    }
+    catch (invalid_argument& e){
+        cout<<"please enter a valid type of arguments  i.e 1 or 2"<<endl;
+    }
+    catch(int n){
+        cout<<"enter either 1 or 2 "<<endl;
+
+    }
+    catch(...){
+        cout<<"an unexpected error occured"<<endl;
+    }
+    if (count!=5)
+        cout<<"Remaininng attempts "<<(5 - count)<<endl;
+    count++;
+    }
+    if  (count==6)
+    //throw an error that wil be in main program and will always terminate program
+    throw runtime_error("program should be terminatefd");
+return false;
+
+}
+
+
+bool isValid2(int row,int col,vector<vector<int>> &grid,char val){
    for (int i=0;i<9;i++){
     if (grid[row][i]==val || (grid[i][col]==val))
     return false;
@@ -15,7 +58,7 @@ bool isValid2(int row,int col,vector<vector<char>> &grid,char val){
    return true;
 }
 
-void unsolvableTosolvable(vector<vector<char>> &grid){
+void unsolvableTosolvable(vector<vector<int>> &grid){
     for(int i=0;i<9;i++){
         for (int j=0;j<9;j++){
             if (grid[i][j] != '.'){
@@ -33,7 +76,7 @@ void unsolvableTosolvable(vector<vector<char>> &grid){
     }
 }
 
-void generateGrid(vector<vector<char>> &grid,int numberOfDigitsGenerated){
+void generateGrid(vector<vector<int>> &grid,int numberOfDigitsGenerated){
     
     // vector<int>rows =R2(numberOfDigitsGenerated*2,0,8);
     // vector<int>cols =R2(numberOfDigitsGenerated,0,8);
@@ -50,7 +93,7 @@ void generateGrid(vector<vector<char>> &grid,int numberOfDigitsGenerated){
     GridPrinter(grid);
 }
 
-void GridPrinter(vector<vector<char>> &grid){
+void GridPrinter(vector<vector<int>> &grid){
     for (int i = 0; i < 9; i++)
         {
             for (int j = 0; j < 9; j++)
@@ -61,36 +104,37 @@ void GridPrinter(vector<vector<char>> &grid){
         }
 }
 
-bool ModeChooser(){
-    // it wil give the user 2 choice s 
-    // firts , does he want to play sudoku ?? 
-    // second , does he wants tos olve sudoky using ai??
-    int choice;
-    cout<<"enter choice "<<endl<<"1) do you want to play Sudoku ?? "<<endl<<"2) do you want to solve your sudoku using ai ?? "<<endl;
-    cin>>choice;
-    while(choice ==0 || choice >2){
-        cout<<"enter a valid choice "<<endl<<"1) do you want to play Sudoku ?? "<<endl<<"2) do you want to solve your sudoku using ai ?? "<<endl;
-        cin>>choice;
-    }
-    if (choice==1)
-    return true;
-    else
-    return false;
-
-
-}
 
 pair<int,int> level_chooser(){// will give user the choice to play which ever level he wants to and
 // also check for validation in it that is is he putting right choice ???
 // it will also generate a grid accodinng to the level choosen
 int level;
 pair<int,int>p;
-cout<<"Enter a level : "<<endl<<"1. easy "<<endl<<"2. medium"<<endl<<"3. hard"<<endl<<"4. expert"<<endl;
-cin>>level;
-while(level==0 || level > 4){
-    cout<<"Enter a valid level : "<<endl<<"1. easy "<<endl<<"2. medium"<<endl<<"3. hard"<<endl<<"4. expert"<<endl;
-    cin>>level;
+int RemainingAttemppts  = 5;
+while(RemainingAttemppts>0){
+    cout<<"Enter a level : "<<endl<<"1. easy "<<endl<<"2. medium"<<endl<<"3. hard"<<endl<<"4. expert"<<endl;
+    try{
+        string input;
+        cin>>input;
+        int temp = stoi(input);
+        if (temp<=0 || temp>4)
+        throw invalid_argument("");
+        level = temp;
+    }
+    catch(invalid_argument& e){
+        cout<<"enter  a valid number between 1 and 4 "<<endl;
+    }
+    catch(...){
+        cout<<"an unexpected error occured "<<endl;
+    }
+    if (RemainingAttemppts>0)
+        cout<<"attempts remaining : "<<RemainingAttemppts<<endl;
+    RemainingAttemppts--;
 }
+
+
+
+
 p.first=level;
 int numberOfDigitsGenerated;
 switch(level){
@@ -115,7 +159,7 @@ p.second=numberOfDigitsGenerated;
 return p;
 }
 
-bool isSolvable(vector<vector<char>> &grid){
+bool isSolvable(vector<vector<int>> &grid){
     unordered_map <char,bool> rows;
     unordered_map <char,bool> cols;
     unordered_map <char,bool> cell;

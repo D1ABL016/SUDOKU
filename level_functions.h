@@ -6,13 +6,13 @@ using namespace std;
 
 
 
-void generateGrid(vector<vector<char>> &grid,int numberOfDigitsGenerated);
-void GridPrinter(vector<vector<char>> &grid);
+void generateGrid(vector<vector<int>> &grid,int numberOfDigitsGenerated);
+void GridPrinter(vector<vector<int>> &grid);
 bool ModeChooser();
-void unsolvableTosolvable(vector<vector<char>> &grid);
-bool isValid2(int row,int col,vector<vector<char>> &grid,char val);
+void unsolvableTosolvable(vector<vector<int>> &grid);
+bool isValid2(int row,int col,vector<vector<int>> &grid,char val);
 pair<int,int> level_chooser();
-bool isSolvable(vector<vector<char>> &grid);
+bool isSolvable(vector<vector<int>> &grid);
 
 
 #endif

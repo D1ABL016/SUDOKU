@@ -2,7 +2,7 @@
 #include<unordered_map>
 using namespace std;
 
-bool issolvable(vector<vector<char>> &grid){
+bool issolvable(vector<vector<int>> &grid){
     unordered_map <char,bool> rows;
     unordered_map <char,bool> cols;
     unordered_map <char,bool> cell;
@@ -13,12 +13,12 @@ bool issolvable(vector<vector<char>> &grid){
             char ch =grid[i][j];
             char ch2 = grid[j][i];
 
-            if (cols[ch2]&& ch2!='.')
+            if (cols[ch2]&& ch2!=0)
             return false;
             else
             cols[ch2] = true;
 
-            if(rows[ch] && ch!='.')
+            if(rows[ch] && ch!=0)
                 return false;            
             else
                 rows[ch] = true;                
@@ -37,7 +37,7 @@ bool issolvable(vector<vector<char>> &grid){
            char ch = grid[a][b];
 
            
-           if(cell[ch] && ch!='.')
+           if(cell[ch] && ch!=0)
            return false;
            else
            cell[ch] =true;
@@ -51,7 +51,7 @@ bool issolvable(vector<vector<char>> &grid){
     return true;
 }
 
-bool isValid(int row,int col,vector<vector<char>> &grid,char val){
+bool isValid(int row,int col,vector<vector<int>> &grid,int val){
    for (int i=0;i<9;i++){
     if (grid[row][i]==val || (grid[i][col]==val))
     return false;
@@ -61,19 +61,19 @@ bool isValid(int row,int col,vector<vector<char>> &grid,char val){
    return true;
 }
 
-bool SudokuSolver(vector<vector<char>> &grid){
+bool SudokuSolver(vector<vector<int>> &grid){
     for (int row =0;row<9;row++){
         for (int col =0;col<9;col++){
-            if (grid[row][col]=='.'){
+            if (grid[row][col]==0){
                 for (int val =1;val<=9;val++){
-                    char ch = char(48+val);
-                    if (isValid(row,col,grid,ch)){
-                        grid[row][col]=ch;
+                    
+                    if (isValid(row,col,grid,val)){
+                        grid[row][col]=val;
                         bool possible =  SudokuSolver(grid);
                         if (possible)
                         return true;
                         else
-                        grid[row][col]='.';
+                        grid[row][col]=0;
                     }
                 }
                 return false;
@@ -84,25 +84,71 @@ bool SudokuSolver(vector<vector<char>> &grid){
     return true;
 }
 
-void inputGrid(vector<vector<char>> &grid){
+void print(vector<vector<int>> &g){
     for (int i = 0; i < 9; i++)
     {
         for (int j = 0; j < 9; j++)
         {
-            cin>>grid[i][j];
-        }        
+            cout<<g[i][j]<<" ";
+        }
+        cout<<endl;
     }
-    bool solvable = issolvable(grid);
-    while(!solvable){
-        cout<<"enter a valid sudoku grid :  "<<endl;
-        for (int i = 0; i < 9; i++)
-    {
-        for (int j = 0; j < 9; j++)
-        {
-            cin>>grid[i][j];
-        }        
+}
+
+void inputGrid(vector<vector<int>> &grid){
+    // for (int i = 0; i < 9; i++)
+    // {
+    //     for (int j = 0; j < 9; j++)
+    //     {
+    //         cin>>grid[i][j];
+    //         if (cin.fail()) {
+    //         throw runtime_error("program terminated as you entered wrong input");
+    //         }
+    //     }        
+    // }
+    // bool solvable = issolvable(grid);
+    // while(!solvable){
+    //     cout<<"enter a valid sudoku grid :  "<<endl;
+    //     for (int i = 0; i < 9; i++)
+    // {
+    //     for (int j = 0; j < 9; j++)
+    //     {
+    //         cin>>grid[i][j];
+    //     }        
+    // }
+    //     solvable = issolvable(grid);
+    // }
+    int attemptsRemaining=5;
+    while(attemptsRemaining>=0){
+        try{
+            for (int i = 0; i < 9; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    string input;
+                    cin>>input;
+                    int element = stoi(input);
+                    if (element>9 || element<0)
+                    throw invalid_argument("");
+                    grid[i][j]=element;
+                }                
+            }
+            break;
+        }
+        
+        catch(invalid_argument& e){
+            cout<<"enter a valid number from 1 to 9"<<endl;
+        }
+        catch(...){
+            cout<<"an unexpecteed error occured"<<endl;
+        }
+        // print(grid);
+        attemptsRemaining--;
+        if (attemptsRemaining>0)
+        cout<<"attempts remaining : "<<attemptsRemaining<<endl;
     }
-        solvable = issolvable(grid);
-    }
+    // isso
     
 }
+
+
